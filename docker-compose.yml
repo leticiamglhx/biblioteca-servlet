@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: biblioteca-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: biblioteca
+    ports:
+      - "3306:3306"
+    volumes:
+      - biblioteca-mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: biblioteca-mysql
+      PMA_PORT: 3306
+    ports:
+      - "81:80"
+
+
+volumes:
+  biblioteca-mysql-data:

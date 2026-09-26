@@ -1,0 +1,33 @@
+package br.com.biblioteca.config;
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
+
+import javax.sql.DataSource;
+
+import com.mysql.cj.jdbc.AbandonedConnectionCleanupThread;
+
+@WebListener
+public class ApplicationListener implements ServletContextListener {
+
+    private DatabaseConfig databaseConfig;
+
+    @Override
+    public void contextInitialized(ServletContextEvent event) {
+
+        databaseConfig = new DatabaseConfig();
+
+        DataSource dataSource = databaseConfig.getDataSource();
+
+        event.getServletContext()
+             .setAttribute("dataSource", dataSource);
+    }
+
+    @Override
+    public void contextDestroyed(ServletContextEvent event) {
+        if(databaseConfig != null) {
+            databaseConfig.close();
+        }
+        AbandonedConnectionCleanupThread.checkedShutdown();
+    }
+}
